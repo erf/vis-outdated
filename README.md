@@ -1,6 +1,8 @@
 # vis-outdated
 
-Keep a list of git-repos (plugins) you want to follow, you can list if the repos are outdated and also update the list to latest.
+Check if a list of git repos are up to date without cloning them. And also update the list.
+
+You can use this vis plugin to check if your other vis plugins are up-to-date.
 
 ## Commands
 
