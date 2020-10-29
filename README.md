@@ -8,6 +8,8 @@ A [vis-plugin](https://github.com/martanne/vis/wiki/Plugins/) to check if a list
 
 Given a list of git repos, we fetch the latest commit hashes using `git ls-remote` and store them in a local cache `~/.vis-outdated`. Now we can compare the local hashes with the latest to see if they are up-to-date.
 
+Note: Once you notice any repos are outdated, you need to update them yourself, `out-up` only updates the local hashes.
+
 ## Commands
 
 **out-ls** - list current + latest repo hashes
