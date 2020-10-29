@@ -55,15 +55,15 @@ end
 
 function get_hash_status(current, latest)
 	if current == nil then
-		return 'Not there'
+		return 'not there'
 	end
 
 	if current == latest then
-		return 'Latest'
+		return 'latest'
 	end 
 
 	if current ~= latest then
-		return 'Outdated'
+		return 'outdated'
 	end
 end
 
@@ -97,12 +97,30 @@ function print_diff(diff)
 	vis:message(s)
 end
 
+function exists(path)
+	local file = io.open(path)
+	if not file then 
+		return false
+	else 
+		file:close() 
+		return true 
+	end
+end	
+
+function getFileName(url)
+  return url:match("^.+/(.+)$")
+end
+
+function getFileExtension(url)
+  return url:match("^.+(%..+)$")
+end
+
 vis:command_register('out-ls', function()
 	local current = read_hashes()
-	vis:message('Current')
+	vis:message('current')
 	print_hashes(current)
 	local latest = fetch_hashes(M.repos)
-	vis:message('Latest')
+	vis:message('latest')
 	print_hashes(latest)
 	return true
 end)
@@ -111,7 +129,7 @@ vis:command_register('out-df', function()
 	local current = read_hashes()
 	local latest = fetch_hashes(M.repos)
 	local diff = calc_diff(current, latest)
-	vis:message('Difference')
+	vis:message('diff')
 	print_diff(diff)
 	return true
 end)
@@ -119,8 +137,26 @@ end)
 vis:command_register('out-up', function()
 	local latest = fetch_hashes(M.repos)
 	write_hashes(latest)
-	vis:message('Updated')
+	vis:message('updated')
 	print_hashes(latest)
+	return true
+end)
+
+vis:command_register('out-in', function()
+	local visrc, err = package.searchpath('visrc', package.path)
+	assert(not err)
+	local vis_path = visrc:match('(.*/)') 
+	local path = vis_path ..'plugins'
+	vis:message('installing to ' .. path)
+	for i, url in ipairs(M.repos) do
+		local name = getFileName(url)
+		local full_path = path .. '/' .. name
+		if exists(full_path) then execute('rm -rf ' .. full_path) end
+		execute('git -C ' .. path .. ' clone --depth 1 --branch=master ' .. url .. ' --quiet 2> /dev/null')
+		execute('rm -rf ' .. full_path .. '/' .. '.git')
+		vis:message('downloaded ' .. url .. ' to ' .. name)
+		vis:redraw()
+	end
 	return true
 end)
 
