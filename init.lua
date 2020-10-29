@@ -142,6 +142,7 @@ vis:command_register('out-up', function()
 	return true
 end)
 
+-- secret command for installing vis-plugins
 vis:command_register('out-in', function()
 	local visrc, err = package.searchpath('visrc', package.path)
 	assert(not err)

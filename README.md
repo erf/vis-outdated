@@ -18,9 +18,6 @@ Note: Once you notice any repos are outdated, you need to update them yourself, 
 
 **out-up** - update local hashes to latest
 
-**out-in** - secret command for installing vis plugins
-
-
 ## Example
 
 
