@@ -2,12 +2,13 @@ local M = {}
 
 local XDG_CACHE_HOME = os.getenv('XDG_CACHE_HOME')
 if XDG_CACHE_HOME then 
-	M.path = XDG_CACHE_HOME .. '/vis-outdated-hashes'
+	M.path = XDG_CACHE_HOME .. '/vis-outdated'
 else
-	M.path = os.getenv('HOME') .. '/.vis-outdated-hashes'
+	M.path = os.getenv('HOME') .. '/.vis-outdated'
 end
 
-local hashes = {}
+-- [repo, hash] dict
+--local hashes = {}
 
 function file_exists(path)
 	local f = io.open(path)
@@ -16,27 +17,30 @@ function file_exists(path)
 	end
 end	
 
-function read_outdated()
-	hashes = {}
+function read_hashes()
 	local f = io.open(M.path)
-	if f == nil then return end
+	if f == nil then 
+		return {}
+	end
+	local t= {}
 	for line in f:lines() do
 		for k, v in string.gmatch(line, '(.+)%s(%s+)') do
-			hashes[k] = v
+			t[k] = v
 		end 
 	end
 	f:close()
+	return t
 end
 
-function write_outdated()
+function write_hashes(hashes)
 	local f = io.open(M.path, 'w+')
 	if f == nil then return end
-	local a = {}
-	for k in pairs(hashes) do table.insert(a, k) end
-	table.sort(a)
-	for i,k in ipairs(a) do 
-		f:write(string.format('%s %s\n', k, hashes[k]))
+	local t = {}
+	for repo, hash in pairs(hashes) do 
+		table.insert(t, repo .. ' ' .. hash)
 	end
+	local s = table.concat(t, '\n')
+	f:write(s)
 	f:close()
 end
 
@@ -51,7 +55,7 @@ function execute(command)
 	return result
 end
 
-function fetch_latest(repos)
+function fetch_hashes(repos)
 	local latest = {}
 	for i, repo in ipairs(repos) do
 		local command = 'git ls-remote ' .. repo .. ' HEAD | cut -f1'
@@ -59,13 +63,51 @@ function fetch_latest(repos)
 		local hash = string.gsub(result, '%s+', '')
 		latest[repo] = hash
 	end
+	return latest
+end
 
-	-- print repo + hash
-	local str = ''
-	for repo, hash in pairs(latest) do
-		str = str .. repo .. " " .. hash .. '\n'
+function get_hash_status(current, latest)
+	if current == nil then
+		return 'Not there'
+	end
+
+	if current == latest then
+		return 'Latest'
 	end 
-	vis:message(str)
+
+	if current ~= latest then
+		return 'Need update'
+	end
+end
+
+-- compare current with latest
+function calc_diff(current, latest) 
+	local diff = {}
+	for repo, hash in pairs(latest) do
+		local current_hash = current[repo]
+		local status = get_hash_status(current_hash, hash)
+		diff[repo] = { hash= hash, status= status }
+	end
+	return diff
+end
+
+function print_hashes(hashes)
+	local t = {}
+	for repo, hash in pairs(hashes) do
+		table.insert(t, repo .. ' ' .. hash)
+	end
+	local s = table.concat(t, '\n')
+	vis:message(s)
+end
+
+
+function print_diff(diff)
+	local t = {}
+	for repo, diff in pairs(diff) do
+		table.insert(t, repo .. ' ' .. diff.hash .. ' ' .. diff.status)
+	end
+	local s = table.concat(t, '\n')
+	vis:message(s)
 end
 
 vis:command_register('out-ls', function(argv, force, win, selection, range)
@@ -76,14 +118,20 @@ vis:command_register('out-ls', function(argv, force, win, selection, range)
 		'https://github.com/erf/vis-cursors',
 	}
 
-	-- fetch a list of latest hash given a list of repos set via visrc.lua
-	local latest = fetch_latest(repos)
+	local current = read_hashes()
 
-	-- compare latest list of hashes with the outdated list, loaded from disk at 
+	local latest = fetch_hashes(repos)
+
+	local diff = calc_diff(current, latest)
+
+	print_diff(diff)
+
+
+	--print_hashes(latest)
+	--write_hashes(latest)
 	-- startup or updated using out-up command
 	-- return a list with [repo, None | Old | Latest
 	-- local diff = compare_to_local(latest, hashes)
-
 	-- TODO print diff list
 
 	return true
