@@ -7,24 +7,12 @@ else
 	M.path = os.getenv('HOME') .. '/.vis-outdated'
 end
 
--- [repo, hash] dict
---local hashes = {}
-
 -- configure in visrc
 M.repos = {}
 
-function file_exists(path)
-	local f = io.open(path)
-	if f == nil then return false
-	else f:close() return true 
-	end
-end	
-
 function read_hashes()
 	local f = io.open(M.path)
-	if f == nil then 
-		return {}
-	end
+	if f == nil then return {} end
 	local t= {}
 	for line in f:lines() do
 		for k, v in string.gmatch(line, '(.+)%s(%w+)') do
@@ -46,10 +34,6 @@ function write_hashes(hashes)
 	f:write(s)
 	f:close()
 end
-
-vis.events.subscribe(vis.events.INIT, function()
-	-- TODO ? read local list of hashes
-end)
 
 function execute(command)
 	local handle = io.popen(command)
