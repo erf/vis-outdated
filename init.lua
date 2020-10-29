@@ -107,11 +107,11 @@ vis:command_register('out-ls', function()
 	return true
 end)
 
-vis:command_register('out-diff', function()
+vis:command_register('out-df', function()
 	local current = read_hashes()
 	local latest = fetch_hashes(M.repos)
 	local diff = calc_diff(current, latest)
-	vis:message('Diff')
+	vis:message('Difference')
 	print_diff(diff)
 	return true
 end)

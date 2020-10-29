@@ -14,7 +14,7 @@ Note: Once you notice any repos are outdated, you need to update them yourself, 
 
 **out-ls** - list current + latest repo hashes
 
-**out-diff** - check if current repos are lagging behind
+**out-df** - check if current repos are lagging behind
 
 **out-up** - update local hashes to latest
 
