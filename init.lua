@@ -24,7 +24,7 @@ function read_hashes()
 	end
 	local t= {}
 	for line in f:lines() do
-		for k, v in string.gmatch(line, '(.+)%s(%s+)') do
+		for k, v in string.gmatch(line, '(.+)%s(%w+)') do
 			t[k] = v
 		end 
 	end
@@ -76,7 +76,7 @@ function get_hash_status(current, latest)
 	end 
 
 	if current ~= latest then
-		return 'Need update'
+		return 'Outdated'
 	end
 end
 
@@ -104,7 +104,7 @@ end
 function print_diff(diff)
 	local t = {}
 	for repo, diff in pairs(diff) do
-		table.insert(t, repo .. ' ' .. diff.hash .. ' ' .. diff.status)
+		table.insert(t, repo .. ' - ' .. diff.status) --.. diff.hash .. ')')
 	end
 	local s = table.concat(t, '\n')
 	vis:message(s)
@@ -112,18 +112,19 @@ end
 
 vis:command_register('out-ls', function(argv, force, win, selection, range)
 
-	-- TODO set in visrc.lua
+	-- TODO move to visrc.lua
 	local repos = {
 		'https://github.com/erf/vis-title',
 		'https://github.com/erf/vis-cursors',
 	}
 
 	local current = read_hashes()
+	--print_hashes(current)
 
 	local latest = fetch_hashes(repos)
+	--print_hashes(latest)
 
 	local diff = calc_diff(current, latest)
-
 	print_diff(diff)
 
 
