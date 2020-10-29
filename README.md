@@ -4,11 +4,7 @@ A [vis-plugin](https://github.com/martanne/vis/wiki/Plugins/) to check if a list
 
 ## How
 
-Given a list of git `repos` in your `visrc.lua` file, we fetch the latest commit hash per repo using `git ls-remote` and store them in a local cache `~/.vis-outdated` (on `out-up`).
-
-On `out-diff`, if the local hash does not match with the latest, we show it as outdated.
-
-`out-ls` fetches the latest commit hashes and prints them, together with the local cache.
+Given a list of git repos, we fetch the latest commit hashes using `git ls-remote` and store them in a local cache `~/.vis-outdated`. Now we can compare the local hashes with the latest to see if they are out of date.
 
 ## Commands
 
