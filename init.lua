@@ -10,6 +10,9 @@ end
 -- [repo, hash] dict
 --local hashes = {}
 
+-- configure in visrc
+M.repos = {}
+
 function file_exists(path)
 	local f = io.open(path)
 	if f == nil then return false
@@ -110,18 +113,12 @@ function print_diff(diff)
 	vis:message(s)
 end
 
-vis:command_register('out-ls', function(argv, force, win, selection, range)
-
-	-- TODO move to visrc.lua
-	local repos = {
-		'https://github.com/erf/vis-title',
-		'https://github.com/erf/vis-cursors',
-	}
+vis:command_register('out-ls', function()
 
 	local current = read_hashes()
 	--print_hashes(current)
 
-	local latest = fetch_hashes(repos)
+	local latest = fetch_hashes(M.repos)
 	--print_hashes(latest)
 
 	local diff = calc_diff(current, latest)
