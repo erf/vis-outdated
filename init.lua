@@ -114,26 +114,30 @@ function print_diff(diff)
 end
 
 vis:command_register('out-ls', function()
-
 	local current = read_hashes()
-	--print_hashes(current)
-
+	vis:message('Current')
+	print_hashes(current)
 	local latest = fetch_hashes(M.repos)
-	--print_hashes(latest)
-
-	local diff = calc_diff(current, latest)
-	print_diff(diff)
-
-
-	--print_hashes(latest)
-	--write_hashes(latest)
-	-- startup or updated using out-up command
-	-- return a list with [repo, None | Old | Latest
-	-- local diff = compare_to_local(latest, hashes)
-	-- TODO print diff list
-
+	vis:message('Latest')
+	print_hashes(latest)
 	return true
 end)
 
+vis:command_register('out-diff', function()
+	local current = read_hashes()
+	local latest = fetch_hashes(M.repos)
+	local diff = calc_diff(current, latest)
+	vis:message('Diff')
+	print_diff(diff)
+	return true
+end)
+
+vis:command_register('out-up', function()
+	local latest = fetch_hashes(M.repos)
+	write_hashes(latest)
+	vis:message('Updated')
+	print_hashes(latest)
+	return true
+end)
 
 return M
