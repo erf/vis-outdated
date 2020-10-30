@@ -1,7 +1,7 @@
 local M = {}
 
 local XDG_CACHE_HOME = os.getenv('XDG_CACHE_HOME')
-if XDG_CACHE_HOME then 
+if XDG_CACHE_HOME then
 	M.path = XDG_CACHE_HOME .. '/vis-outdated'
 else
 	M.path = os.getenv('HOME') .. '/.vis-outdated'
@@ -17,7 +17,7 @@ function read_hashes()
 	for line in f:lines() do
 		for k, v in string.gmatch(line, '(.+)%s(%w+)') do
 			t[k] = v
-		end 
+		end
 	end
 	f:close()
 	return t
@@ -27,7 +27,7 @@ function write_hashes(hashes)
 	local f = io.open(M.path, 'w+')
 	if f == nil then return end
 	local t = {}
-	for repo, hash in pairs(hashes) do 
+	for repo, hash in pairs(hashes) do
 		table.insert(t, repo .. ' ' .. hash)
 	end
 	local s = table.concat(t, '\n')
@@ -60,7 +60,7 @@ function get_hash_status(current, latest)
 
 	if current == latest then
 		return 'latest'
-	end 
+	end
 
 	if current ~= latest then
 		return 'outdated'
@@ -68,7 +68,7 @@ function get_hash_status(current, latest)
 end
 
 -- compare current with latest
-function calc_diff(current, latest) 
+function calc_diff(current, latest)
 	local diff = {}
 	for repo, hash in pairs(latest) do
 		local current_hash = current[repo]
@@ -99,11 +99,11 @@ end
 
 function exists(path)
 	local file = io.open(path)
-	if not file then 
+	if not file then
 		return false
-	else 
-		file:close() 
-		return true 
+	else
+		file:close()
+		return true
 	end
 end	
 
@@ -146,7 +146,7 @@ end)
 vis:command_register('out-in', function()
 	local visrc, err = package.searchpath('visrc', package.path)
 	assert(not err)
-	local vis_path = visrc:match('(.*/)') 
+	local vis_path = visrc:match('(.*/)')
 	local path = vis_path ..'plugins'
 	vis:message('installing to ' .. path)
 	for i, url in ipairs(M.repos) do
