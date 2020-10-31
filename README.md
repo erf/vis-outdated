@@ -35,7 +35,7 @@ require('plugins/vis-outdated').repos = {
 
 ## Local cache file
 
-A list of repos and latest commit hashes are stored in the file `.vis-outdated`, 
+A list of *repos* and *commit hashes* are stored in the file `.vis-outdated`, 
 which is stored in either `XDG_CACHE_HOME` or in your `HOME` folder.
 
 File format:
