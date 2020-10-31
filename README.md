@@ -1,8 +1,8 @@
 # vis-outdated
 
-A [vis-plugin](https://github.com/martanne/vis/wiki/Plugins/) to check if a list of git repos are up to date.
+A plugin for [vis](https://github.com/martanne/vis) to keep up-to-date with a list of git repos.
 
-> Instead of using a complex [plugin manager](https://github.com/erf/vis-plug) to keep your `vis-plugins` up to date, this might work as a simpler solution. Or if you just want to keep up-to-date with som arbitrary git repo.
+> It might be a simpler solution for keeping up to date with a set of `vis` plugins, instead of using e.g. [vis-plug](https://github.com/erf/vis-plug).
 
 ## How
 
@@ -18,6 +18,8 @@ Note: Once you notice any repos are outdated, you need to update them yourself, 
 
 **out-up** - update local hashes to latest
 
+**out-in** - git clone (shallow) repos to **vis** `plugins` folder
+
 ## Example
 
 
@@ -27,6 +29,7 @@ Example configuration:
 require('plugins/vis-outdated').repos = {
 	'https://github.com/erf/vis-title',
 	'https://github.com/erf/vis-cursors',
+	'https://github.com/erf/vis-highlight',
 }
 ```
 

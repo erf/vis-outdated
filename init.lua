@@ -115,9 +115,10 @@ function getFileExtension(url)
   return url:match("^.+(%..+)$")
 end
 
+-- TODO colorize results of cache list e.g. red if old, green if latest
 vis:command_register('out-ls', function()
 	local current = read_hashes()
-	vis:message('current')
+	vis:message('on disk')
 	print_hashes(current)
 	local latest = fetch_hashes(M.repos)
 	vis:message('latest')
@@ -142,21 +143,19 @@ vis:command_register('out-up', function()
 	return true
 end)
 
--- secret command for installing vis-plugins
+-- git clone (shallow) repos to the vis-plugins folder
 vis:command_register('out-in', function()
 	local visrc, err = package.searchpath('visrc', package.path)
 	assert(not err)
 	local vis_path = visrc:match('(.*/)')
+	assert(vis_path)
 	local path = vis_path ..'plugins'
 	vis:message('installing to ' .. path)
 	for i, url in ipairs(M.repos) do
 		local name = getFileName(url)
 		local full_path = path .. '/' .. name
-		if exists(full_path) then execute('rm -rf ' .. full_path) end
 		execute('git -C ' .. path .. ' clone --depth 1 --branch=master ' .. url .. ' --quiet 2> /dev/null')
-		execute('rm -rf ' .. full_path .. '/' .. '.git')
-		vis:message('downloaded ' .. url .. ' to ' .. name)
-		vis:redraw()
+		vis:message('git cloned (shallow) ' .. url .. ' to ' .. name)
 	end
 	return true
 end)
