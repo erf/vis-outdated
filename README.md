@@ -2,7 +2,7 @@
 
 Keep up-to-date with a list of git repos using [vis](https://github.com/martanne/vis).
 
-> It might be a simpler solution for keeping up to date with a set of `vis` plugins, instead of using e.g. [vis-plug](https://github.com/erf/vis-plug).
+> It might be a simpler solution for keeping up to date with a set of `vis` plugins, instead of using e.g. [vis-plug](https://github.com/erf/vis-plug)
 
 ## How
 
