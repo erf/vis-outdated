@@ -2,13 +2,13 @@
 
 Keep up-to-date with a list of git repos using [vis](https://github.com/martanne/vis).
 
-> It might be a simpler solution for keeping up to date with a set of `vis` plugins, instead of using e.g. [vis-plug](https://github.com/erf/vis-plug)
+> also consider [vis-plug](https://github.com/erf/vis-plug)
 
 ## How
 
-Given a list of git repos, we fetch the latest commit hashes using `git ls-remote` and store them in a local cache `~/.vis-outdated`. Now we can compare the local hashes with the latest to see if they are up-to-date.
+Given a set of git repos, we fetch the latest commit hashes using `git ls-remote` and store them in a local cache `~/.vis-outdated`. We can then compare the local hashes with the latest to see if they are up-to-date.
 
-Note: Once you notice any repos are outdated, you need to update them yourself, `out-up` only updates the local hashes.
+If you notice any repos are outdated, you need to update them yourself. `out-up` only update the local hash cache.
 
 ## Commands
 
@@ -22,8 +22,7 @@ Note: Once you notice any repos are outdated, you need to update them yourself, 
 
 ## Example
 
-
-Example configuration:
+Example config:
 
 ```
 require('plugins/vis-outdated').repos = {
