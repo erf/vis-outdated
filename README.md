@@ -2,7 +2,7 @@
 
 Keep up-to-date with a list of git repos using [vis](https://github.com/martanne/vis).
 
-> also consider [vis-plug](https://github.com/erf/vis-plug)
+> Also consider [vis-plug](https://github.com/erf/vis-plug)
 
 ## How
 
