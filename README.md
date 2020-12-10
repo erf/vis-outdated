@@ -14,11 +14,11 @@ If you notice any repos are outdated, you need to update them yourself. `out-up`
 
 **out-ls** - list current + latest repo hashes
 
-**out-df** - check if current repos are lagging behind
+**out-df** - check if current repos differ from latest
 
-**out-up** - update local hashes to latest
+**out-up** - update local hash cache to latest
 
-**out-in** - git clone (shallow) repos to **vis** `plugins` folder
+**out-in** - do a shallow git clone to **vis** `plugins` folder (no overwrite)
 
 ## Example
 
