@@ -8,7 +8,7 @@ M.path = BASE .. '/.vis-outdated'
 -- configure in visrc
 M.repos = {}
 
-function read_hashes()
+local read_hashes = function()
 	local f = io.open(M.path)
 	if f == nil then return {} end
 	local t= {}
@@ -21,7 +21,7 @@ function read_hashes()
 	return t
 end
 
-function write_hashes(hashes)
+local write_hashes = function(hashes)
 	local f = io.open(M.path, 'w+')
 	if f == nil then return end
 	local t = {}
@@ -33,14 +33,14 @@ function write_hashes(hashes)
 	f:close()
 end
 
-function execute(command)
+local execute = function(command)
 	local handle = io.popen(command)
 	local result = handle:read("*a")
 	handle:close()
 	return result
 end
 
-function fetch_hashes(repos)
+local fetch_hashes = function(repos)
 	local latest = {}
 	for i, repo in ipairs(repos) do
 		local command = 'git ls-remote ' .. repo .. ' HEAD | cut -f1'
@@ -51,7 +51,7 @@ function fetch_hashes(repos)
 	return latest
 end
 
-function get_hash_status(current, latest)
+local get_hash_status = function(current, latest)
 	if current == nil then
 		return 'not there'
 	end
@@ -66,7 +66,7 @@ function get_hash_status(current, latest)
 end
 
 -- compare current with latest
-function calc_diff(current, latest)
+local calc_diff = function(current, latest)
 	local diff = {}
 	for repo, hash in pairs(latest) do
 		local current_hash = current[repo]
@@ -76,7 +76,7 @@ function calc_diff(current, latest)
 	return diff
 end
 
-function print_hashes(hashes)
+local print_hashes = function(hashes)
 	local t = {}
 	for repo, hash in pairs(hashes) do
 		table.insert(t, repo .. ' ' .. hash)
@@ -86,7 +86,7 @@ function print_hashes(hashes)
 end
 
 
-function print_diff(diff)
+local print_diff = function(diff)
 	local t = {}
 	for repo, diff in pairs(diff) do
 		table.insert(t, repo .. ' - ' .. diff.status) --.. diff.hash .. ')')
@@ -95,21 +95,11 @@ function print_diff(diff)
 	vis:message(s)
 end
 
-function exists(path)
-	local file = io.open(path)
-	if not file then
-		return false
-	else
-		file:close()
-		return true
-	end
-end	
-
-function getFileName(url)
+local getFileName = function(url)
   return url:match("^.+/(.+)$")
 end
 
-function getFileExtension(url)
+local getFileExtension = function(url)
   return url:match("^.+(%..+)$")
 end
 
