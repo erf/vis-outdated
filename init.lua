@@ -1,11 +1,9 @@
 local M = {}
-
+local HOME = os.getenv('HOME')
 local XDG_CACHE_HOME = os.getenv('XDG_CACHE_HOME')
-if XDG_CACHE_HOME then
-	M.path = XDG_CACHE_HOME .. '/vis-outdated'
-else
-	M.path = os.getenv('HOME') .. '/.vis-outdated'
-end
+local BASE = XDG_CACHE_HOME or HOME
+
+M.path = BASE .. '/.vis-outdated'
 
 -- configure in visrc
 M.repos = {}
