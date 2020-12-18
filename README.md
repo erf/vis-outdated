@@ -2,8 +2,6 @@
 
 Keep up-to-date with a list of git repos using [vis](https://github.com/martanne/vis).
 
-> Also consider [vis-plug](https://github.com/erf/vis-plug)
-
 ## How
 
 Given a set of git repos, we fetch the latest commit hashes using `git ls-remote` and store them in a local cache `~/.vis-outdated`. We can then compare the local hashes with the latest to see if they are up-to-date.
