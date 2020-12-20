@@ -69,7 +69,9 @@ local combine_hashes = function(local_hashes, latest_hashes)
 	for repo, latest_hash in pairs(latest_hashes) do
 		local local_hash = local_hashes[repo]
 		local str = '' .. repo .. ' ' .. local_hash .. ' -> ' .. latest_hash
-		if local_hash ~= latest_hash then
+		if local_hash == latest_hash then
+			str = str .. ' LATEST'
+		else
 			str = str .. ' OUT-OF-DATE'
 		end
 		diff[repo] = str
