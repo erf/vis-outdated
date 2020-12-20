@@ -14,7 +14,7 @@ We then compare the local hashes with the latest remote hashes to see if they ar
 
 **outdated-up** - update local hashes
 
-### Bonus command
+### Bonus
 
 **outdated-install** - do a git clone (shallow) to **vis** `plugins` folder (no overwrite)
 
