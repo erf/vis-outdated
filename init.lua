@@ -50,7 +50,7 @@ local execute = function(command)
 	return result
 end
 
-local fetch_hash_for_repo = function(repo)
+local fetch_hash = function(repo)
 	local command = 'git ls-remote ' .. repo .. ' HEAD | cut -c1-7'
 	local result = execute(command)
 	return string.gsub(result, '[%s\n\r]', '')
@@ -59,24 +59,36 @@ end
 local fetch_hashes = function(repos)
 	local latest = {}
 	for i, repo in ipairs(repos) do
-		latest[repo] = fetch_hash_for_repo(repo)
+		latest[repo] = fetch_hash(repo)
 	end
 	return latest
 end
 
-local combine_hashes = function(local_hashes, latest_hashes)
-	local diff = {}
-	for repo, latest_hash in pairs(latest_hashes) do
-		local local_hash = local_hashes[repo]
+local per_repo_outdated = function()
+	local local_hashes = read_hashes()
+	local write_to_file = local_hashes == nil
+	local latest_hashes = {}
+	for i, repo in pairs(M.repos) do 
+		local latest_hash = fetch_hash(repo)
+		local local_hash = local_hashes and local_hashes[repo]
+		if local_hash == nil then
+			write_to_file = true
+			local_hash = latest_hash
+		end
 		local str = '' .. repo .. ' ' .. local_hash .. ' -> ' .. latest_hash
 		if local_hash == latest_hash then
 			str = str .. ' LATEST'
 		else
 			str = str .. ' OUT-OF-DATE'
 		end
-		diff[repo] = str
+		vis:message(str)
+		vis:redraw()
+		latest_hashes[repo] = latest_hash
 	end
-	return diff
+	-- write local hashes to file if not in sync with latest
+	if write_to_file then
+		write_hashes(latest_hashes)
+	 end
 end
 
 local getFileName = function(url)
@@ -86,15 +98,7 @@ end
 vis:command_register('outdated', function()
 	vis:message('fetching latest..')
 	vis:redraw()
-	local local_hashes = read_hashes()
-	local latest_hashes = fetch_hashes(M.repos)
-	if local_hashes == nil then
-		local_hashes = latest_hashes
-		write_hashes(latest_hashes)
-	end
-	local combined = combine_hashes(local_hashes, latest_hashes)
-	local str = concat(combined, function(_, val) return val end)
-	vis:message(str)
+	per_repo_outdated()
 	return true
 end)
 
@@ -103,7 +107,7 @@ vis:command_register('outdated-up', function()
 	vis:redraw()
 	local latest = fetch_hashes(M.repos)
 	write_hashes(latest)
-	vis:message('fetched and wrote hashes!')
+	vis:message('UP-TO-DATE')
 	return true
 end)
 
