@@ -99,10 +99,6 @@ local getFileName = function(url)
   return url:match("^.+/(.+)$")
 end
 
-local getFileExtension = function(url)
-  return url:match("^.+(%..+)$")
-end
-
 -- TODO colorize results of cache list e.g. red if old, green if latest
 vis:command_register('out-ls', function()
 	local current = read_hashes()
