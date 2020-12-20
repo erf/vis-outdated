@@ -10,13 +10,13 @@ We then compare the local hashes with the latest remote hashes to see if they ar
 
 ## Commands
 
-**out-diff** - are we up-to-date?
+**outdated** - are we up-to-date?
 
-**out-update** - update local hashes
+**outdated-up** - update local hashes
 
 ### Bonus command
 
-**out-install** - do a git clone (shallow) to **vis** `plugins` folder (no overwrite)
+**outdated-install** - do a git clone (shallow) to **vis** `plugins` folder (no overwrite)
 
 ## Config
 

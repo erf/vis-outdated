@@ -83,7 +83,7 @@ local getFileName = function(url)
   return url:match("^.+/(.+)$")
 end
 
-vis:command_register('out-diff', function()
+vis:command_register('outdated', function()
 	vis:message('fetching latest..')
 	vis:redraw()
 	local local_hashes = read_hashes()
@@ -98,17 +98,18 @@ vis:command_register('out-diff', function()
 	return true
 end)
 
-vis:command_register('out-update', function()
-	vis:info('updating..')
+vis:command_register('outdated-up', function()
+	vis:message('updating..')
+	vis:redraw()
 	local latest = fetch_hashes(M.repos)
 	write_hashes(latest)
-	vis:info('fetched and wrote hashes')
+	vis:message('fetched and wrote hashes!')
 	return true
 end)
 
 -- TODO move to vis-fetch?
 -- git clone (shallow) repos to the vis-plugins folder
-vis:command_register('out-install', function()
+vis:command_register('outdated-install', function()
 	local visrc, err = package.searchpath('visrc', package.path)
 	assert(not err)
 	local vis_path = visrc:match('(.*/)')
