@@ -137,7 +137,6 @@ vis:command_register('out-in', function()
 	vis:message('installing to ' .. path)
 	for i, url in ipairs(M.repos) do
 		local name = getFileName(url)
-		local full_path = path .. '/' .. name
 		execute('git -C ' .. path .. ' clone --depth 1 --branch=master ' .. url .. ' --quiet 2> /dev/null')
 		vis:message('git cloned (shallow) ' .. url .. ' to ' .. name)
 	end
