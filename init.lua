@@ -18,24 +18,28 @@ end
 
 local read_hashes = function()
 	local f = io.open(M.path)
-	if f == nil then return {} end
-	local t= {}
+	if f == nil then
+		return nil
+	end
+	local result= {}
 	for line in f:lines() do
 		for k, v in string.gmatch(line, '(.+)%s(%w+)') do
-			t[k] = v
+			result[k] = v
 		end
 	end
 	f:close()
-	return t
+	return result
 end
 
 local write_hashes = function(hashes)
 	local f = io.open(M.path, 'w+')
-	if f == nil then return end
-	local s = concat(hashes, function(repo, hash)
+	if f == nil then
+		return
+	end
+	local str = concat(hashes, function(repo, hash)
 		return repo .. ' ' .. hash
 	end)
-	f:write(s)
+	f:write(str)
 	f:close()
 end
 
@@ -49,88 +53,53 @@ end
 local fetch_hashes = function(repos)
 	local latest = {}
 	for i, repo in ipairs(repos) do
-		local command = 'git ls-remote ' .. repo .. ' HEAD | cut -f1'
+		local command = 'git ls-remote ' .. repo .. ' HEAD | cut -c1-7'
 		local result = execute(command)
-		local hash = string.gsub(result, '%s+', '')
+		local hash = string.gsub(result, '[%s\n\r]', '')
 		latest[repo] = hash
+		--vis:message(hash)
+		--vis:redraw()
 	end
 	return latest
 end
 
-local get_hash_status = function(current, latest)
-	if current == nil then
-		return 'not there'
-	end
-
-	if current == latest then
-		return 'latest'
-	end
-
-	if current ~= latest then
-		return 'outdated'
-	end
-end
-
--- compare current with latest
-local calc_diff = function(current, latest)
+local combine_hashes = function(local_hashes, latest_hashes)
 	local diff = {}
-	for repo, hash in pairs(latest) do
-		local current_hash = current[repo]
-		local status = get_hash_status(current_hash, hash)
-		diff[repo] = { hash= hash, status= status }
+	for repo, local_hash in pairs(local_hashes) do
+		local latest_hash = latest_hashes[repo]
+		diff[repo] = '' .. repo .. ' ' .. local_hash .. ' -> ' .. latest_hash
 	end
 	return diff
-end
-
-local print_hashes = function(hashes)
-	local s = concat(hashes, function(repo, hash)
-		return repo .. ' ' .. hash
-	end)
-	vis:message(s)
-end
-
-
-local print_diff = function(diff)
-	local s = concat(diff, function(repo, diff)
-		return repo .. ' - ' .. diff.status -- .. diff.hash
-	end)
-	vis:message(s)
 end
 
 local getFileName = function(url)
   return url:match("^.+/(.+)$")
 end
 
--- TODO colorize results of cache list e.g. red if old, green if latest
-vis:command_register('out-ls', function()
-	local current = read_hashes()
-	vis:message('on disk')
-	print_hashes(current)
-	local latest = fetch_hashes(M.repos)
-	vis:message('latest')
-	print_hashes(latest)
+vis:command_register('out-diff', function()
+	local local_hashes = read_hashes()
+	local latest_hashes = fetch_hashes(M.repos)
+	if local_hashes == nil then
+		local_hashes = latest_hashes
+		write_hashes(latest_hashes)
+	end
+	local combined = combine_hashes(local_hashes, latest_hashes)
+	local str = concat(combined, function(_, val) return val end)
+	vis:message(str)
 	return true
 end)
 
-vis:command_register('out-df', function()
-	local current = read_hashes()
-	local latest = fetch_hashes(M.repos)
-	local diff = calc_diff(current, latest)
-	vis:message('diff')
-	print_diff(diff)
-	return true
-end)
-
-vis:command_register('out-up', function()
+vis:command_register('out-update', function()
+	vis:info('updating..')
 	local latest = fetch_hashes(M.repos)
 	write_hashes(latest)
-	vis:message('updated')
-	print_hashes(latest)
+	vis:info('fetched and wrote hashes')
 	return true
 end)
 
+-- TODO move to vis-fetch
 -- git clone (shallow) repos to the vis-plugins folder
-vis:command_register('out-in', function()
+vis:command_register('out-install', function()
 	local visrc, err = package.searchpath('visrc', package.path)
 	assert(not err)
 	local vis_path = visrc:match('(.*/)')

@@ -4,21 +4,19 @@ Keep up-to-date with a list of git repos using [vis](https://github.com/martanne
 
 ## How
 
-Given a set of configured *git* repos, we fetch commit hashes using `git ls-remote` and store them on file. 
+Given a set of configured *git* repos, we fetch commit hashes using `git ls-remote` and store them on disk. 
 
 We then compare the local hashes with the latest remote hashes to see if they are up-to-date.
 
 ## Commands
 
-**out-ls** - list current + latest repo hashes
+**out-diff** - are we up-to-date?
 
-**out-df** - check if hashes differ from latest
-
-**out-up** - update local hashes to latest
+**out-update** - update local hashes
 
 ### Bonus command
 
-**out-in** - do a git clone (shallow) to **vis** `plugins` folder (no overwrite)
+**out-install** - do a git clone (shallow) to **vis** `plugins` folder (no overwrite)
 
 ## Example
 
