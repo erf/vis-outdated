@@ -8,6 +8,14 @@ M.path = BASE .. '/.vis-outdated'
 -- configure in visrc
 M.repos = {}
 
+local concat = function(iterable, func)
+	local arr = {}
+	for key, val in pairs(iterable) do
+		table.insert(arr, func(key, val))
+	end
+	return table.concat(arr, '\n')
+end
+
 local read_hashes = function()
 	local f = io.open(M.path)
 	if f == nil then return {} end
@@ -24,11 +32,9 @@ end
 local write_hashes = function(hashes)
 	local f = io.open(M.path, 'w+')
 	if f == nil then return end
-	local t = {}
-	for repo, hash in pairs(hashes) do
-		table.insert(t, repo .. ' ' .. hash)
-	end
-	local s = table.concat(t, '\n')
+	local s = concat(hashes, function(repo, hash)
+		return repo .. ' ' .. hash
+	end)
 	f:write(s)
 	f:close()
 end
@@ -77,21 +83,17 @@ local calc_diff = function(current, latest)
 end
 
 local print_hashes = function(hashes)
-	local t = {}
-	for repo, hash in pairs(hashes) do
-		table.insert(t, repo .. ' ' .. hash)
-	end
-	local s = table.concat(t, '\n')
+	local s = concat(hashes, function(repo, hash)
+		return repo .. ' ' .. hash
+	end)
 	vis:message(s)
 end
 
 
 local print_diff = function(diff)
-	local t = {}
-	for repo, diff in pairs(diff) do
-		table.insert(t, repo .. ' - ' .. diff.status) --.. diff.hash .. ')')
-	end
-	local s = table.concat(t, '\n')
+	local s = concat(diff, function(repo, diff)
+		return repo .. ' - ' .. diff.status -- .. diff.hash
+	end)
 	vis:message(s)
 end
 
