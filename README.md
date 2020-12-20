@@ -18,11 +18,13 @@ We then compare the local hashes with the latest remote hashes to see if they ar
 
 **out-install** - do a git clone (shallow) to **vis** `plugins` folder (no overwrite)
 
-## Example
+## Config
 
-Example config:
+Just set `repos` to an array of git repositories.
 
-```
+Example:
+
+``` lua
 require('plugins/vis-outdated').repos = {
 	'https://github.com/erf/vis-title',
 	'https://github.com/erf/vis-cursors',
