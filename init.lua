@@ -75,7 +75,8 @@ local per_repo_outdated = function()
 			write_to_file = true
 			local_hash = latest_hash
 		end
-		local str = '' .. repo .. ' ' .. local_hash .. ' -> ' .. latest_hash
+		local short_repo = repo:match('^.*//(.*)')
+		local str = '' .. short_repo .. ' ' .. local_hash .. ' -> ' .. latest_hash
 		if local_hash == latest_hash then
 			str = str .. ' LATEST'
 		else
