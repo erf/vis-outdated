@@ -50,24 +50,29 @@ local execute = function(command)
 	return result
 end
 
+local fetch_hash_for_repo = function(repo)
+	local command = 'git ls-remote ' .. repo .. ' HEAD | cut -c1-7'
+	local result = execute(command)
+	return string.gsub(result, '[%s\n\r]', '')
+end
+
 local fetch_hashes = function(repos)
 	local latest = {}
 	for i, repo in ipairs(repos) do
-		local command = 'git ls-remote ' .. repo .. ' HEAD | cut -c1-7'
-		local result = execute(command)
-		local hash = string.gsub(result, '[%s\n\r]', '')
-		latest[repo] = hash
-		--vis:message(hash)
-		--vis:redraw()
+		latest[repo] = fetch_hash_for_repo(repo)
 	end
 	return latest
 end
 
 local combine_hashes = function(local_hashes, latest_hashes)
 	local diff = {}
-	for repo, local_hash in pairs(local_hashes) do
-		local latest_hash = latest_hashes[repo]
-		diff[repo] = '' .. repo .. ' ' .. local_hash .. ' -> ' .. latest_hash
+	for repo, latest_hash in pairs(latest_hashes) do
+		local local_hash = local_hashes[repo]
+		local str = '' .. repo .. ' ' .. local_hash .. ' -> ' .. latest_hash
+		if local_hash ~= latest_hash then
+			str = str .. ' OUT-OF-DATE'
+		end
+		diff[repo] = str
 	end
 	return diff
 end
@@ -77,6 +82,8 @@ local getFileName = function(url)
 end
 
 vis:command_register('out-diff', function()
+	vis:message('fetching latest..')
+	vis:redraw()
 	local local_hashes = read_hashes()
 	local latest_hashes = fetch_hashes(M.repos)
 	if local_hashes == nil then
@@ -97,7 +104,7 @@ vis:command_register('out-update', function()
 	return true
 end)
 
--- TODO move to vis-fetch
+-- TODO move to vis-fetch?
 -- git clone (shallow) repos to the vis-plugins folder
 vis:command_register('out-install', function()
 	local visrc, err = package.searchpath('visrc', package.path)
