@@ -4,19 +4,21 @@ Keep up-to-date with a list of git repos using [vis](https://github.com/martanne
 
 ## How
 
-Given a set of git repos, we fetch the latest commit hashes using `git ls-remote` and store them in a local cache `~/.vis-outdated`. We can then compare the local hashes with the latest to see if they are up-to-date.
+Given a set of configured *git* repos, we fetch commit hashes using `git ls-remote` and store them on file. 
 
-If you notice any repos are outdated, you need to update them yourself. `out-up` only update the local hash cache.
+We then compare the local hashes with the latest remote hashes to see if they are up-to-date.
 
 ## Commands
 
 **out-ls** - list current + latest repo hashes
 
-**out-df** - check if hashes differs from latest
+**out-df** - check if hashes differ from latest
 
-**out-up** - update local hash cache to latest
+**out-up** - update local hashes to latest
 
-**out-in** - do a shallow git clone to **vis** `plugins` folder (no overwrite)
+### Bonus command
+
+**out-in** - do a git clone (shallow) to **vis** `plugins` folder (no overwrite)
 
 ## Example
 
@@ -32,8 +34,7 @@ require('plugins/vis-outdated').repos = {
 
 ## Local cache file
 
-A list of *repos* and *commit hashes* are stored in the file `.vis-outdated`, 
-which is stored in either `XDG_CACHE_HOME` or in your `HOME` folder.
+A table of *repos* and *commits* are stored in `{XDG_CACHE_HOME|HOME}.vis-outdated`.
 
 File format:
 
