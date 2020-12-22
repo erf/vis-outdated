@@ -1,9 +1,13 @@
 local M = {}
-local HOME = os.getenv('HOME')
-local XDG_CACHE_HOME = os.getenv('XDG_CACHE_HOME')
-local BASE = XDG_CACHE_HOME or HOME
 
-M.path = BASE .. '/.vis-outdated'
+local get_default_cache_path = function()
+	local HOME = os.getenv('HOME')
+	local XDG_CACHE_HOME = os.getenv('XDG_CACHE_HOME')
+	local BASE = XDG_CACHE_HOME or HOME
+	return BASE .. '/.vis-outdated.csv'
+end
+
+M.path = get_default_cache_path()
 
 -- configure in visrc
 M.repos = {}
@@ -23,7 +27,7 @@ local read_hashes = function()
 	end
 	local result= {}
 	for line in f:lines() do
-		for k, v in string.gmatch(line, '(.+)%s(%w+)') do
+		for k, v in string.gmatch(line, '(.+)[,%s](%w+)') do
 			result[k] = v
 		end
 	end
@@ -36,8 +40,8 @@ local write_hashes = function(hashes)
 	if f == nil then
 		return
 	end
-	local str = concat(hashes, function(repo, hash)
-		return repo .. ' ' .. hash
+	local str = concat(hashes, function(url, hash)
+		return url .. ',' .. hash
 	end)
 	f:write(str)
 	f:close()
@@ -106,8 +110,7 @@ end)
 vis:command_register('outdated-up', function()
 	vis:message('updating..')
 	vis:redraw()
-	local latest = fetch_hashes(M.repos)
-	write_hashes(latest)
+	write_hashes(fetch_hashes(M.repos))
 	vis:message('UP-TO-DATE')
 	return true
 end)

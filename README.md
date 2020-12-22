@@ -6,7 +6,7 @@ Keep up-to-date with a list of git repos using [vis](https://github.com/martanne
 
 Given a set of *git* repos, we fetch commit hashes using `git ls-remote` and store them on disk. 
 
-We then compare the local hashes with the latest remote hashes to see if they are up-to-date.
+We then compare the local cache with the latest hashes to see if they are up-to-date.
 
 ## Commands
 
@@ -32,13 +32,6 @@ require('plugins/vis-outdated').repos = {
 }
 ```
 
-## Local cache file
+## Local CSV cache file
 
-A table of *repos* and *commits* (of length 7) are stored in `{XDG_CACHE_HOME|HOME}.vis-outdated`.
-
-File format:
-
-| url | hash |
-|-----|------|
-| https://github.com/erf/vis-title.git | 98c037f |
-| https://github.com/erf/vis-cursors.git |a9c615d |
+*repos* and *commits* are cached in `{XDG_CACHE_HOME|HOME}.vis-outdated.csv`.
