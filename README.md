@@ -10,7 +10,7 @@ We then compare the local cache with the latest hashes to see if they are up-to-
 
 ## Commands
 
-**outdated** - are we up-to-date?
+**outdated** - compare local hashes to latest
 
 **outdated-up** - update local hashes
 
