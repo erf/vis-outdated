@@ -1,4 +1,4 @@
-# vis-outdated 🕷️
+# vis-outdated
 
 Keep up-to-date with a list of git repos using [vis](https://github.com/martanne/vis).
 
