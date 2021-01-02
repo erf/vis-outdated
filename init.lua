@@ -87,17 +87,14 @@ local fetch_hashes = function(repos)
 	return latest
 end
 
-local per_repo_outdated = function()
-	local local_hashes = read_hashes()
-	local write_to_file = local_hashes == nil
+local per_repo_outdated = function(local_hashes)
 	local latest_hashes = {}
 	for _, repo in pairs(M.repos) do
 		repo = get_full_url(repo)
 		local latest_hash = fetch_hash(repo)
 		local local_hash = local_hashes and local_hashes[repo]
 		if local_hash == nil then
-			write_to_file = true
-			local_hash = latest_hash
+			local_hash = 'MISSING'
 		end
 		local str = '' .. repo .. ' ' .. local_hash .. ' -> ' .. latest_hash
 		if local_hash == latest_hash then
@@ -109,16 +106,14 @@ local per_repo_outdated = function()
 		vis:redraw()
 		latest_hashes[repo] = latest_hash
 	end
-	-- write local hashes to file if not in sync with latest
-	if write_to_file then
-		write_hashes(latest_hashes)
-	 end
+	return latest_hashes
 end
 
 vis:command_register('outdated', function()
 	vis:message('fetching latest..')
 	vis:redraw()
-	per_repo_outdated()
+	local local_hashes = read_hashes()
+	per_repo_outdated(local_hashes)
 	return true
 end, 'compare local hashes to latest')
 
