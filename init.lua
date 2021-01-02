@@ -78,51 +78,55 @@ local get_full_url = function(url)
 	end
 end
 
-local fetch_hashes = function(repos)
-	local latest = {}
-	for _, repo in ipairs(repos) do
-		repo = get_full_url(repo)
-		latest[repo] = fetch_hash(repo)
-	end
-	return latest
-end
-
-local per_repo_outdated = function(local_hashes)
+local for_each_repo = function(func, args)
 	local latest_hashes = {}
 	for _, repo in pairs(M.repos) do
 		repo = get_full_url(repo)
-		local latest_hash = fetch_hash(repo)
-		local local_hash = local_hashes and local_hashes[repo]
-		if local_hash == nil then
-			local_hash = 'MISSING'
-		end
-		local str = '' .. repo .. ' ' .. local_hash .. ' -> ' .. latest_hash
-		if local_hash == latest_hash then
-			str = str .. ' LATEST'
-		else
-			str = str .. ' OUT-OF-DATE'
-		end
-		vis:message(str)
-		vis:redraw()
-		latest_hashes[repo] = latest_hash
+		latest_hashes[repo] = func(repo, args)
 	end
 	return latest_hashes
+end
+
+local diff = function(repo, args)
+	local local_hashes = args
+	repo = get_full_url(repo)
+	local latest_hash = fetch_hash(repo)
+	local local_hash = local_hashes and local_hashes[repo]
+	if local_hash == nil then
+		local_hash = 'MISSING'
+	end
+	local str = '' .. repo .. ' ' .. local_hash .. ' -> ' .. latest_hash
+	if local_hash == latest_hash then
+		str = str .. ' LATEST'
+	else
+		str = str .. ' OUT-OF-DATE'
+	end
+	vis:message(str)
+	vis:redraw()
+	return latest_hash
+end
+
+local fetch = function(repo, args)
+	local hash = fetch_hash(repo)
+	vis:message('fetched ' .. repo .. ' -> ' .. hash)
+	vis:redraw()
+	return hash
 end
 
 vis:command_register('outdated', function()
 	vis:message('fetching latest..')
 	vis:redraw()
-	local local_hashes = read_hashes()
-	per_repo_outdated(local_hashes)
+	for_each_repo(diff, read_hashes())
+	vis:message('DONE')
 	return true
 end, 'compare local hashes to latest')
 
 vis:command_register('outdated-update', function()
 	vis:message('updating hashes..')
 	vis:redraw()
-	write_hashes(fetch_hashes(M.repos))
-	vis:message('UP-TO-DATE')
+	write_hashes(for_each_repo(fetch))
+	vis:message('SAVED TO DISK')
 	return true
-end, 'update local hashes from latest')
+end, 'write latest hashes to disk')
 
 return M

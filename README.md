@@ -12,7 +12,7 @@ We then compare the local cache with the latest hashes to see if they are up-to-
 
 **outdated** - compare local hashes to latest
 
-**outdated-update** - update local hashes from latest
+**outdated-update** - write latest hashes to file
 
 ## Config
 
