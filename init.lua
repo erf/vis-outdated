@@ -60,9 +60,28 @@ local fetch_hash = function(repo)
 	return string.gsub(result, '[%s\n\r]', '')
 end
 
+local is_full_url = function(url)
+	return url:find('^.+://') ~= nil
+end
+
+local is_short_ssh_url = function(url)
+	return url:find('^.+@.+:.+')
+end
+
+local get_full_url = function(url)
+	if is_full_url(url) then
+		return url
+	elseif is_short_ssh_url(url) then
+		return url
+	else
+		return 'https://github.com/' .. url
+	end
+end
+
 local fetch_hashes = function(repos)
 	local latest = {}
-	for i, repo in ipairs(repos) do
+	for _, repo in ipairs(repos) do
+		repo = get_full_url(repo)
 		latest[repo] = fetch_hash(repo)
 	end
 	return latest
@@ -72,15 +91,15 @@ local per_repo_outdated = function()
 	local local_hashes = read_hashes()
 	local write_to_file = local_hashes == nil
 	local latest_hashes = {}
-	for i, repo in pairs(M.repos) do 
+	for _, repo in pairs(M.repos) do
+		repo = get_full_url(repo)
 		local latest_hash = fetch_hash(repo)
 		local local_hash = local_hashes and local_hashes[repo]
 		if local_hash == nil then
 			write_to_file = true
 			local_hash = latest_hash
 		end
-		local short_repo = repo:match('^.*//(.*)')
-		local str = '' .. short_repo .. ' ' .. local_hash .. ' -> ' .. latest_hash
+		local str = '' .. repo .. ' ' .. local_hash .. ' -> ' .. latest_hash
 		if local_hash == latest_hash then
 			str = str .. ' LATEST'
 		else
@@ -94,10 +113,6 @@ local per_repo_outdated = function()
 	if write_to_file then
 		write_hashes(latest_hashes)
 	 end
-end
-
-local getFileName = function(url)
-  return url:match("^.+/(.+)$")
 end
 
 vis:command_register('outdated', function()

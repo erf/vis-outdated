@@ -16,15 +16,23 @@ We then compare the local cache with the latest hashes to see if they are up-to-
 
 ## Config
 
-Just set `repos` to an array of git repositories.
-
-Example:
+Just set `repos` to an array of git repositories
 
 ``` lua
 require('plugins/vis-outdated').repos = {
 	'https://github.com/erf/vis-title',
 	'https://github.com/erf/vis-cursors',
 	'https://github.com/erf/vis-highlight',
+}
+```
+
+`github` urls can be shortend to only `{name}/{repo}`
+
+``` lua
+require('plugins/vis-outdated').repos = {
+	'erf/vis-title',
+	'erf/vis-cursors',
+	'erf/vis-highlight',
 }
 ```
 
