@@ -105,14 +105,14 @@ vis:command_register('outdated', function()
 	vis:redraw()
 	per_repo_outdated()
 	return true
-end)
+end, 'compare local hashes to latest')
 
-vis:command_register('outdated-up', function()
-	vis:message('updating..')
+vis:command_register('outdated-update', function()
+	vis:message('updating hashes..')
 	vis:redraw()
 	write_hashes(fetch_hashes(M.repos))
 	vis:message('UP-TO-DATE')
 	return true
-end)
+end, 'update local hashes from latest')
 
 return M
