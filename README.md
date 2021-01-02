@@ -14,10 +14,6 @@ We then compare the local cache with the latest hashes to see if they are up-to-
 
 **outdated-up** - update local hashes
 
-### Bonus
-
-**outdated-install** - do a git clone (shallow) to **vis** `plugins` folder (no overwrite)
-
 ## Config
 
 Just set `repos` to an array of git repositories.

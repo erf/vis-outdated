@@ -115,21 +115,4 @@ vis:command_register('outdated-up', function()
 	return true
 end)
 
--- TODO move to vis-fetch?
--- git clone (shallow) repos to the vis-plugins folder
-vis:command_register('outdated-install', function()
-	local visrc, err = package.searchpath('visrc', package.path)
-	assert(not err)
-	local vis_path = visrc:match('(.*/)')
-	assert(vis_path)
-	local path = vis_path ..'plugins'
-	vis:message('installing to ' .. path)
-	for i, url in ipairs(M.repos) do
-		local name = getFileName(url)
-		execute('git -C ' .. path .. ' clone --depth 1 --branch=master ' .. url .. ' --quiet 2> /dev/null')
-		vis:message('git cloned (shallow) ' .. url .. ' to ' .. name)
-	end
-	return true
-end)
-
 return M
