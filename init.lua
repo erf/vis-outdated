@@ -80,7 +80,7 @@ end
 
 local for_each_repo = function(func, args)
 	local latest_hashes = {}
-	for _, repo in pairs(M.repos) do
+	for _, repo in ipairs(M.repos) do
 		repo = get_full_url(repo)
 		latest_hashes[repo] = func(repo, args)
 	end
